@@ -73,17 +73,26 @@ export function buildWhatsAppUrl(message: string): string {
 
 export function buildOrderMessage(
   name: string,
+  address: string,
+  homeDelivery: boolean,
   note: string,
   lines: { title: string; quantity: number; price: number; lineTotal: number }[],
   total: number,
 ): string {
   const itemLines = lines.map(
     (line) =>
-      `${line.title} × ${line.quantity} @ ${formatMoney(line.price)} — ${formatMoney(line.lineTotal)}`,
+      `${line.title}\n${line.quantity} × ${formatMoney(line.price)}\n${formatMoney(line.lineTotal)}`,
   );
+  const delivery = homeDelivery ? "Yes (extra fees may apply)" : "No";
   const parts = [
-    store.name,
-    `Order from ${name.trim()}`,
+    `Hello, ${store.name}.`,
+    "",
+    "Thank you for your order. Please confirm the books and the final price.",
+    "",
+    "Receipt",
+    `Name: ${name.trim()}`,
+    `Address: ${address.trim()}`,
+    `Home delivery: ${delivery}`,
     "",
     ...itemLines,
     "",

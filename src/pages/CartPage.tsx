@@ -8,6 +8,8 @@ import { buildOrderMessage, buildWhatsAppUrl, formatMoney, getBook } from "../li
 export function CartPage() {
   const { items, setQuantity, remove } = useCart();
   const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
+  const [homeDelivery, setHomeDelivery] = useState<boolean | null>(null);
   const [note, setNote] = useState("");
 
   useEffect(() => {
@@ -31,9 +33,15 @@ export function CartPage() {
   );
 
   const total = lines.reduce((sum, line) => sum + line.lineTotal, 0);
-  const canSend = name.trim().length > 0 && lines.length > 0;
+  const canSend =
+    name.trim().length > 0 &&
+    address.trim().length > 0 &&
+    homeDelivery !== null &&
+    lines.length > 0;
   const message = buildOrderMessage(
     name,
+    address,
+    homeDelivery === true,
     note,
     lines.map((line) => ({
       title: line.book.title,
@@ -115,7 +123,10 @@ export function CartPage() {
             className="mt-6 max-w-lg"
             onSubmit={(event) => event.preventDefault()}
           >
-            <label className="block font-semibold" htmlFor="order-name">
+            <p className="leading-7">
+              Thank you for shopping with us. Add your name and the address where we should send the books, then choose whether you want home delivery. Home delivery may cost extra fees. We will confirm the order with you on WhatsApp.
+            </p>
+            <label className="mt-4 block font-semibold" htmlFor="order-name">
               Your name
             </label>
             <input
@@ -124,8 +135,44 @@ export function CartPage() {
               autoComplete="name"
               value={name}
               onChange={(event) => setName(event.target.value)}
-              className="mt-2 w-full rounded-md border border-line bg-white px-3 py-2 text-ink dark:border-white/15 dark:bg-[#1c2622] dark:text-[#f3efe6]"
+              className={fieldClass}
             />
+            <label className="mt-4 block font-semibold" htmlFor="order-address">
+              Address
+            </label>
+            <textarea
+              id="order-address"
+              required
+              rows={3}
+              autoComplete="street-address"
+              value={address}
+              onChange={(event) => setAddress(event.target.value)}
+              className={fieldClass}
+            />
+            <fieldset className="mt-4">
+              <legend className="font-semibold">Home delivery</legend>
+              <p className="mt-1">
+                Please choose one. Home delivery may cost extra fees.
+              </p>
+              <label className="mt-3 flex items-start gap-2">
+                <input
+                  type="radio"
+                  name="home-delivery"
+                  checked={homeDelivery === true}
+                  onChange={() => setHomeDelivery(true)}
+                />
+                <span>Home delivery (extra fees may apply)</span>
+              </label>
+              <label className="mt-2 flex items-start gap-2">
+                <input
+                  type="radio"
+                  name="home-delivery"
+                  checked={homeDelivery === false}
+                  onChange={() => setHomeDelivery(false)}
+                />
+                <span>Without home delivery</span>
+              </label>
+            </fieldset>
             <label className="mt-4 block font-semibold" htmlFor="order-note">
               Note <span className="font-normal">(optional)</span>
             </label>
@@ -134,7 +181,7 @@ export function CartPage() {
               rows={3}
               value={note}
               onChange={(event) => setNote(event.target.value)}
-              className="mt-2 w-full rounded-md border border-line bg-white px-3 py-2 text-ink dark:border-white/15 dark:bg-[#1c2622] dark:text-[#f3efe6]"
+              className={fieldClass}
             />
             {canSend ? (
               <a
@@ -154,7 +201,9 @@ export function CartPage() {
                 >
                   Send order on WhatsApp
                 </button>
-                <p className="mt-2 text-sm">Enter your name to send the order.</p>
+                <p className="mt-2 text-sm">
+                  Enter your name and address, and choose home delivery, to send the order.
+                </p>
               </>
             )}
           </form>
@@ -163,6 +212,9 @@ export function CartPage() {
     </section>
   );
 }
+
+const fieldClass =
+  "order-field mt-2 w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-ink dark:border-white/15 dark:bg-[#1c2622] dark:text-[#f3efe6]";
 
 function CartIcon() {
   return (

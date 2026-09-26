@@ -39,7 +39,9 @@ html.dark body {
 #book-search:focus,
 #book-search:focus-visible,
 .search-submit:focus,
-.search-submit:focus-visible {
+.search-submit:focus-visible,
+.order-field:focus,
+.order-field:focus-visible {
   outline: none;
 }
 

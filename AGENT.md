@@ -16,7 +16,7 @@ Product requirements live in [SPEC.md](SPEC.md). Follow that file when behavior 
 - Open **In Stock** for books that can be ordered, and **Out of Stock** for books that cannot.
 - Open a book page with cover, price, and description. In-stock books can be added to the cart. Out-of-stock books stay visible and cannot be added.
 - Review the cart, change quantities, and remove items.
-- Enter a name and an optional note, then open WhatsApp with the order already written.
+- Read a short thank-you, enter a name and an address, choose home delivery or not, add an optional note, then open WhatsApp with the order already written. Home delivery may cost extra fees.
 
 Books live in a data file in the project, so adding a title means editing that file. A staff admin screen can come later.
 
@@ -31,7 +31,7 @@ flowchart LR
   wa --> talk[Confirm details in chat]
 ```
 
-The WhatsApp message includes the store name, customer name, each line (title, quantity, price), the cart total, and the note. It opens `https://wa.me/<number>?text=<message>` in a new tab. The phone number and currency live in one config file so they are easy to change.
+The WhatsApp message is a short thank-you, then a receipt: name, address, home delivery as Yes or No, each book with its title, quantity, and price, the total, and the note. The address is its own line. It opens `https://wa.me/<number>?text=<message>` in a new tab. The phone number and currency live in one config file so they are easy to change.
 
 Payment is a later step on the same path: after the cart, a future checkout can either open WhatsApp (as now) or take payment. This version only builds the WhatsApp branch. Prices are shown so the customer sees a total, and the chat is where the final amount is agreed.
 
@@ -42,7 +42,7 @@ Payment is a later step on the same path: after the cart, a future checkout can 
 - **In Stock** — only books that can be added to the cart.
 - **Out of Stock** — only books that are unavailable. They can be opened and read about, and the add-to-cart button stays off.
 - **Book** — one title. Reached from Shop, In Stock, Out of Stock, search results, or featured books, not as its own nav item.
-- **Cart** — line items, quantities, total, name, note, and "Send order on WhatsApp".
+- **Cart** — line items, quantities, total, a short thank-you, name, address, a home-delivery choice, note, and "Send order on WhatsApp". The address and note boxes do not resize, and clicking them to type does not add an outline.
 - **About** — the store's story.
 - **Visit** — physical address coming soon, email, and social links with icons: Facebook, Instagram, TikTok, WhatsApp, and Twitter. No street address, hours, or map.
 

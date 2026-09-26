@@ -42,7 +42,7 @@ export const store = {
     ],
     steps: [
       "Add the books you want to your cart.",
-      "Send the order on WhatsApp, with your name and any note.",
+      "Send the order on WhatsApp, with your name, address, home delivery choice, and any note. Home delivery may cost extra fees.",
       "The shop confirms what is on hand, and the final price, in that chat.",
     ],
   },

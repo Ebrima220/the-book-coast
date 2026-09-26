@@ -76,8 +76,10 @@ A single book is not a nav item.
 - A cart icon beside the page heading.
 - Line items with quantity controls and remove.
 - Total.
-- Name (required) and an optional note.
-- **Send order on WhatsApp** opens the chat. It does nothing useful if the cart is empty or the name is blank.
+- A short thank-you while the visitor fills in the order. It mentions that home delivery may cost extra fees.
+- Name (required), address (required), a required home-delivery choice, and an optional note. The address box sits directly under the name. The address and note boxes cannot be resized. Clicking a box to type does not add an extra outline.
+- Home delivery is a choice of home delivery or without home delivery. Home delivery means extra fees may apply. The order cannot be sent until a choice is made.
+- **Send order on WhatsApp** opens the chat. It stays off until the cart has books and the name, address, and home-delivery choice are filled in.
 
 ### About
 
@@ -144,7 +146,7 @@ Filters combine with the current page. In Stock plus Fiction shows fiction that 
 - Price and title are read from the catalog at render time, including inside the WhatsApp text.
 - Out-of-stock books cannot be added. If a book later becomes out of stock while it is already in the cart, the cart line stays until the visitor removes it, and the book page no longer offers add to cart.
 - The WhatsApp link is `https://wa.me/<digits>?text=<encoded message>`.
-- Message contents, in order: store name, customer name, one line per item (title, quantity, price), cart total, and the note when one was entered.
+- The WhatsApp text is a short thank-you, then a receipt: name, address, home delivery (Yes or No), each book as title, quantity, unit price, and line price, then the total, and the note when one was entered. The address is a labeled line. It is not written as “deliver to” a place.
 - The number and currency come from store config. The number is country code plus digits, with no `+` or spaces.
 
 ## Routes

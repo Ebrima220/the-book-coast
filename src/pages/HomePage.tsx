@@ -12,7 +12,7 @@ export function HomePage() {
       <h1 className="font-serif text-3xl">How to order</h1>
       <ol className="mt-4 list-decimal space-y-2 pl-5">
         <li>Add the books you want to your cart.</li>
-        <li>Send the order on WhatsApp. The shop confirms the details in that chat.</li>
+        <li>Send the order on WhatsApp with your name and address. The shop confirms the details in that chat.</li>
       </ol>
       <Link
         to="/shop"
