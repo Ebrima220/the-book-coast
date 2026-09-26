@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-serif: "Libre Baskerville", Georgia, serif;
+  --color-paper: #f4efe6;
+  --color-ink: #1c1915;
+  --color-sea: #1e3a34;
+  --color-foam: #f6f1e7;
+  --color-clay: #b5522a;
+  --color-line: #e3d6c4;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+html.dark body {
+  background: #121816;
+  color: #f3efe6;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-clay);
+  outline-offset: 2px;
+}
+
+#book-search:focus,
+#book-search:focus-visible,
+.search-submit:focus,
+.search-submit:focus-visible {
+  outline: none;
+}
+
+button,
+a {
+  cursor: pointer;
+}
