@@ -1,7 +1,7 @@
 export const store = {
   name: "The Book Coast",
-  /** Country code plus digits, no plus sign or spaces. Replace before taking real orders. */
-  whatsappNumber: "2200000000",
+  /** Country code plus digits, no plus sign or spaces. */
+  whatsappNumber: "2202262364",
   currency: "USD",
   locale: "en-US",
   /** Shown until a shop address exists. There is no physical address yet. */

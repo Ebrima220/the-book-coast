@@ -8,6 +8,8 @@
   --color-paper: #f4efe6;
   --color-ink: #1c1915;
   --color-sea: #1e3a34;
+  --color-sea-bright: #2a6b5e;
+  --color-sea-deep: #101f1c;
   --color-foam: #f6f1e7;
   --color-clay: #b5522a;
   --color-line: #e3d6c4;
@@ -48,4 +50,12 @@ html.dark body {
 button,
 a {
   cursor: pointer;
+}
+
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }

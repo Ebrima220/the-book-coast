@@ -14,9 +14,9 @@ Product requirements live in [SPEC.md](SPEC.md). Follow that file when behavior 
 - Browse books as a simple list, search by title or author, and filter by Fiction or Non-fiction.
 - Under Non-fiction, narrow further to Self-Development or Financial Literacy.
 - Open **In Stock** for books that can be ordered, and **Out of Stock** for books that cannot.
-- Open a book page with cover, price, and description. In-stock books can be added to the cart. Out-of-stock books stay visible and cannot be added.
+- Open a book page with a back arrow, cover, price, and description. In-stock books can be added to the cart. Out-of-stock books stay visible and cannot be added.
 - Review the cart, change quantities, and remove items.
-- Read a short thank-you, enter a name and an address, choose home delivery or not, add an optional note, then open WhatsApp with the order already written. Home delivery may cost extra fees.
+- Read a short thank-you, enter a name and an address, choose home delivery or not, add an optional note, then send the order on WhatsApp as a PDF receipt. Home delivery may cost extra fees.
 
 Books live in a data file in the project, so adding a title means editing that file. A staff admin screen can come later.
 
@@ -31,7 +31,7 @@ flowchart LR
   wa --> talk[Confirm details in chat]
 ```
 
-The WhatsApp message is a short thank-you, then a receipt: name, address, home delivery as Yes or No, each book with its title, quantity, and price, the total, and the note. The address is its own line. It opens `https://wa.me/<number>?text=<message>` in a new tab. The phone number and currency live in one config file so they are easy to change.
+The order is a PDF receipt: a short thank-you, then the name, the address on its own line, home delivery as Yes or No, each book with its title, quantity, and price, the total, and the note. The PDF is shared to WhatsApp as a file, so the receipt is not an editable chat message. Where the browser cannot share a file, the PDF is saved and WhatsApp opens on the shop number with an empty message so the file can be attached. The phone number and currency live in one config file so they are easy to change.
 
 Payment is a later step on the same path: after the cart, a future checkout can either open WhatsApp (as now) or take payment. This version only builds the WhatsApp branch. Prices are shown so the customer sees a total, and the chat is where the final amount is agreed.
 
@@ -57,10 +57,10 @@ flowchart LR
   bestSales[Best Sales card] --> page
 ```
 
-- **Side nav, fixed.** It does not scroll with the page. On a phone it folds behind a menu button.
-- **Center, scrolling.** The banner and the current page move. Books are a grid: cover, title, author, price, stock, and the description underneath. Add to cart appears when a pointer hovers the card. On a touch screen the button stays visible. Out-of-stock cards show a disabled button.
-- **Top strip, sticky.** The dark-mode icon stays visible. The search field appears only on Shop, In Stock, and Out of Stock. No Live badge, no notification bell, and no profile.
-- **Best Sales, on browsing pages.** Home, Shop, In Stock, and Out of Stock show this card. On a large screen it sits in its own column and does not scroll with the books. On a small screen it follows the list. About, Visit, Cart, and a single book page do not show it.
+- **Side nav, fixed.** It does not scroll with the page. On a phone it folds behind a menu button. Visit is not in the nav. Best Sales is, in Visit's old place. On a medium or large screen the cart sits at the bottom of the nav. On a phone, dark mode sits at the bottom of the menu.
+- **Center, scrolling.** The banner and the current page move. Books are 5 rows. Sliding moves only the row under the pointer, and that row loops so more books keep coming. A phone shows two books in each row. Each cover sits on a colored panel, with the title, a short description, and a save heart underneath, plus price and stock. Add to cart appears when a pointer hovers the card. On a touch screen the button stays visible. Out-of-stock cards show a disabled button. A Visit footer follows every page.
+- **Top strip, sticky.** Search appears only on Shop, In Stock, and Out of Stock. On a phone the cart icon is in this strip. On a medium or large screen the dark-mode icon is here. No Live badge, no notification bell, and no profile.
+- **Browsing area.** Home, Shop, In Stock, and Out of Stock fill the scrolling center from edge to edge. Quantity changes, remove, and Clear all are on the cart page.
 
 ## Side nav
 
@@ -71,8 +71,9 @@ Top to bottom:
 - **In Stock** — books available to order.
 - **Out of Stock** — books that are unavailable.
 - **About** — the store's story.
-- **Visit** — physical address coming soon, plus email and social links.
-- **Cart** — a cart icon, plus the item count, hidden when the cart is empty. The cart page heading uses the same icon.
+- **Best Sales** — a button in the place Visit used to occupy. The ranked list opens only when that button is clicked.
+- **Cart** — on a medium or large screen, a cart icon and the item count. The count is hidden when the cart is empty. On a phone the cart icon is in the top strip. The cart page heading uses the same icon.
+- **Dark mode** — on a phone, at the bottom of the menu.
 
 **In Stock** and **Out of Stock** are the labels for available and unavailable. They are two lists of the same catalog, split by a stock flag on each book.
 
@@ -82,7 +83,7 @@ The banner sits where the sample says hello. It changes on its own every 15 seco
 
 The dark-mode control is a crescent moon in light mode and a sun in dark mode. It switches the whole site and remembers the choice in the browser.
 
-**Best Sales** lists the books with the highest `unitsSold`. When a sale is registered, that number is raised on the book in the catalog file, and the card reorders itself. If nothing has sold yet, the card says no sales are recorded. Each row links to the book. It does not show ratings, an Order button row like the sample, or an achievement card.
+**Best Sales** is a button in the side nav. The books stay hidden until it is clicked, then the list shows the titles with the highest `unitsSold`. Scrolling that open list moves only the books. Clicking the button again closes the list. When a sale is registered, that number is raised on the book in the catalog file, and the list reorders itself. If nothing has sold yet, the open list says no sales are recorded. Each row links to the book. It does not show ratings, an Order button row like the sample, or an achievement card.
 
 ## Search and filters
 
@@ -120,7 +121,7 @@ Data files:
 - Cart state in the browser (`localStorage`) so a refresh does not empty the cart.
 - Covers in `public/covers/`. Until real photos exist, use simple placeholders.
 
-A cart item stores book id and quantity. Price is always read from the catalog when rendering and when building the WhatsApp text, so a price change in the data file shows up immediately.
+A cart item stores book id and quantity. Price is always read from the catalog when rendering and when building the PDF receipt, so a price change in the data file shows up immediately.
 
 ## Build order
 

@@ -15,6 +15,7 @@ type CartContextValue = {
   add: (bookId: string) => void;
   setQuantity: (bookId: string, quantity: number) => void;
   remove: (bookId: string) => void;
+  clear: () => void;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
@@ -72,15 +73,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setQuantity(bookId, quantity) {
         setItems((current) => {
           if (quantity < 1) return current.filter((item) => item.bookId !== bookId);
-          return current.map((item) =>
-            item.bookId === bookId
-              ? { ...item, quantity: Math.floor(quantity) }
-              : item,
-          );
+          const book = getBook(bookId);
+          return current.map((item) => {
+            if (item.bookId !== bookId) return item;
+            const next = Math.floor(quantity);
+            if (book && !book.inStock && next > item.quantity) return item;
+            return { ...item, quantity: next };
+          });
         });
       },
       remove(bookId) {
         setItems((current) => current.filter((item) => item.bookId !== bookId));
+      },
+      clear() {
+        setItems([]);
       },
     };
   }, [items]);

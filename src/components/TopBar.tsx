@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
+import { CartIcon } from "./CartSummary";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function TopBar({
   menuOpen,
@@ -14,7 +16,7 @@ export function TopBar({
   const query = params.get("q") ?? "";
   const [value, setValue] = useState(query);
   const navigate = useNavigate();
-  const { theme, toggle } = useTheme();
+  const { count } = useCart();
   const showSearch =
     location.pathname === "/shop" ||
     location.pathname === "/in-stock" ||
@@ -87,40 +89,19 @@ export function TopBar({
       ) : (
         <div className="flex-1" />
       )}
-      <button
-        type="button"
-        className="rounded-md border border-line p-2 dark:border-white/15"
-        onClick={toggle}
-        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+      <Link
+        to="/cart"
+        className="relative rounded-md border border-line p-2 text-ink no-underline md:hidden dark:border-white/15 dark:text-[#f3efe6]"
+        aria-label={count > 0 ? `Cart, ${count} items` : "Cart"}
       >
-        {theme === "dark" ? <SunIcon /> : <MoonIcon />}
-      </button>
+        <CartIcon />
+        {count > 0 ? (
+          <span className="absolute -top-1 -right-1 rounded-full bg-clay px-1.5 text-xs text-white">
+            {count}
+          </span>
+        ) : null}
+      </Link>
+      <ThemeToggle className="hidden rounded-md border border-line p-2 md:inline-flex dark:border-white/15" />
     </header>
-  );
-}
-
-function MoonIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-      <path
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z"
-      />
-    </svg>
-  );
-}
-
-function SunIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-      <circle cx="12" cy="12" r="4" fill="currentColor" />
-      <g stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-        <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8" />
-      </g>
-    </svg>
   );
 }

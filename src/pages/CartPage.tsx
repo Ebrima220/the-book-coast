@@ -3,14 +3,17 @@ import { Link } from "react-router-dom";
 import { BookCover } from "../components/BookCover";
 import { useCart } from "../context/CartContext";
 import { store } from "../data/store";
-import { buildOrderMessage, buildWhatsAppUrl, formatMoney, getBook } from "../lib/catalog";
+import { formatMoney, getBook, whatsAppChatUrl } from "../lib/catalog";
+import { orderPdfFile } from "../lib/orderPdf";
 
 export function CartPage() {
-  const { items, setQuantity, remove } = useCart();
+  const { items, setQuantity, remove, clear } = useCart();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [homeDelivery, setHomeDelivery] = useState<boolean | null>(null);
   const [note, setNote] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sendNote, setSendNote] = useState("");
 
   useEffect(() => {
     document.title = `Cart · ${store.name}`;
@@ -38,20 +41,47 @@ export function CartPage() {
     address.trim().length > 0 &&
     homeDelivery !== null &&
     lines.length > 0;
-  const message = buildOrderMessage(
-    name,
-    address,
-    homeDelivery === true,
-    note,
-    lines.map((line) => ({
-      title: line.book.title,
-      quantity: line.quantity,
-      price: line.book.price,
-      lineTotal: line.lineTotal,
-    })),
-    total,
-  );
-  const whatsappUrl = buildWhatsAppUrl(message);
+
+  async function sendOrder() {
+    if (!canSend || homeDelivery === null || sending) return;
+    setSending(true);
+    setSendNote("");
+    const file = orderPdfFile({
+      name,
+      address,
+      homeDelivery,
+      note,
+      lines: lines.map((line) => ({
+        title: line.book.title,
+        quantity: line.quantity,
+        price: line.book.price,
+        lineTotal: line.lineTotal,
+      })),
+      total,
+    });
+    const share = { files: [file], title: `${store.name} order` };
+    try {
+      if (navigator.canShare?.(share)) {
+        await navigator.share(share);
+        setSendNote("Choose WhatsApp in the share menu. The receipt goes as a PDF file.");
+        return;
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+    } finally {
+      setSending(false);
+    }
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    window.open(whatsAppChatUrl(), "_blank", "noopener,noreferrer");
+    setSendNote(
+      "The PDF is saved on this device. Attach it in the WhatsApp chat that opened. The books and prices stay in the file.",
+    );
+  }
 
   return (
     <section>
@@ -95,14 +125,16 @@ export function CartPage() {
                       −
                     </button>
                     <span aria-live="polite">{line.quantity}</span>
-                    <button
-                      type="button"
-                      className="rounded-md border border-line px-3 py-1 dark:border-white/15"
-                      aria-label={`Increase quantity of ${line.book.title}`}
-                      onClick={() => setQuantity(line.book.id, line.quantity + 1)}
-                    >
-                      +
-                    </button>
+                    {line.book.inStock ? (
+                      <button
+                        type="button"
+                        className="rounded-md border border-line px-3 py-1 dark:border-white/15"
+                        aria-label={`Increase quantity of ${line.book.title}`}
+                        onClick={() => setQuantity(line.book.id, line.quantity + 1)}
+                      >
+                        +
+                      </button>
+                    ) : null}
                     <button
                       type="button"
                       className="rounded-md px-3 py-1 text-sm text-clay"
@@ -118,7 +150,16 @@ export function CartPage() {
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-xl font-semibold">Total: {formatMoney(total)}</p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={clear}
+              className="rounded-md border border-line px-4 py-2 text-sm font-semibold dark:border-white/15"
+            >
+              Clear all
+            </button>
+            <p className="text-xl font-semibold">Total: {formatMoney(total)}</p>
+          </div>
           <form
             className="mt-6 max-w-lg"
             onSubmit={(event) => event.preventDefault()}
@@ -184,14 +225,20 @@ export function CartPage() {
               className={fieldClass}
             />
             {canSend ? (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-block rounded-md bg-clay px-4 py-2 font-semibold text-white no-underline"
-              >
-                Send order on WhatsApp
-              </a>
+              <>
+                <button
+                  type="button"
+                  onClick={sendOrder}
+                  disabled={sending}
+                  className="mt-4 rounded-md bg-clay px-4 py-2 font-semibold text-white"
+                >
+                  Send order on WhatsApp
+                </button>
+                <p className="mt-2 text-sm">
+                  The order is a PDF receipt. The books, prices, and address are in that file, so they cannot be edited in the chat.
+                </p>
+                {sendNote ? <p className="mt-2 text-sm">{sendNote}</p> : null}
+              </>
             ) : (
               <>
                 <button

@@ -18,11 +18,12 @@ The sample dashboard is a structure reference only.
 | Region | Behavior |
 | --- | --- |
 | Side nav | Fixed. Does not scroll. On a small screen it folds into a menu button. |
-| Top strip | Sticky. Holds search and the dark-mode icon only. |
+| Top strip | Sticky. Holds search. On a small screen it also holds the cart icon. On a medium or large screen it holds the dark-mode icon. |
 | Center | Scrolls. Holds the banner and the current page. |
-| Best Sales | On Home, Shop, In Stock, and Out of Stock. On a large screen it is a fixed column beside the scrolling center. On a small screen it follows the grid. Hidden on About, Visit, Cart, and the book page. |
+| Cart | On a medium or large screen it is an icon at the bottom of the side nav. The browsing area uses the full width of the scrolling center. |
+| Footer | Visit: physical address coming soon, email, and social links. Shown at the bottom of every page, on every screen size. |
 
-Do not include a profile, a Live badge, notifications, an achievement card, or ratings. Books are a grid: cover, title, author, price, stock, and the description under the title. Hovering a card reveals Add to cart. Touch screens keep that button visible. Out-of-stock cards show a disabled button instead.
+Do not include a profile, a Live badge, notifications, an achievement card, or ratings. Books sit in 5 rows. Each row slides on its own, so moving one row leaves the others still. A row loops without end: after the last book, the same row continues with its books again. A phone shows two books in each row, with the next book peeking in. On a medium or large screen the rows stay five high, with wider cards. Each cover sits on a colored panel. Under it: the title, a short description, and a heart that saves the book in the browser. Price and stock stay on the card. Hovering a card reveals Add to cart. Touch screens keep that button visible. Out-of-stock cards show a disabled button instead.
 
 ## Side nav
 
@@ -33,8 +34,9 @@ Top to bottom:
 3. **In Stock** — books with `inStock: true`.
 4. **Out of Stock** — books with `inStock: false`.
 5. **About**
-6. **Visit**
-7. **Cart** — a cart icon, plus the item count. Hide the count when the cart is empty.
+6. **Best Sales** — a button in the place Visit used to occupy. The ranked list stays hidden until that button is clicked. When it is open, scrolling moves only those books. The rest of the nav stays still. Each row links to that book.
+7. **Cart** — on a medium or large screen, at the bottom of the nav, with a cart icon and the item count. Hide the count when the cart is empty. On a small screen the cart leaves the nav and sits in the top strip.
+8. **Dark mode** — on a small screen, at the bottom of the menu, where the cart sits on a larger screen.
 
 A single book is not a nav item.
 
@@ -66,6 +68,7 @@ A single book is not a nav item.
 
 ### Book
 
+- A back arrow returns to the previous page.
 - Cover, title, author, price, description, and stock label.
 - In stock: add to cart.
 - Out of stock: no add to cart.
@@ -79,7 +82,7 @@ A single book is not a nav item.
 - A short thank-you while the visitor fills in the order. It mentions that home delivery may cost extra fees.
 - Name (required), address (required), a required home-delivery choice, and an optional note. The address box sits directly under the name. The address and note boxes cannot be resized. Clicking a box to type does not add an extra outline.
 - Home delivery is a choice of home delivery or without home delivery. Home delivery means extra fees may apply. The order cannot be sent until a choice is made.
-- **Send order on WhatsApp** opens the chat. It stays off until the cart has books and the name, address, and home-delivery choice are filled in.
+- **Send order on WhatsApp** builds a PDF receipt and sends that file. It stays off until the cart has books and the name, address, and home-delivery choice are filled in. The receipt is not written into the chat as text.
 
 ### About
 
@@ -104,7 +107,8 @@ A single book is not a nav item.
 
 ## Dark mode
 
-- One icon in the top strip: a crescent moon in light mode, a sun in dark mode.
+- A crescent moon in light mode, a sun in dark mode.
+- On a small screen the control is in the menu. On a medium or large screen it is in the top strip.
 - Switches the whole site between light and dark.
 - The choice is remembered in the browser.
 
@@ -133,6 +137,9 @@ Filters combine with the current page. In Stock plus Fiction shows fiction that 
 
 ## Best Sales
 
+- Lives in the side nav, where Visit used to be. It is not the large-screen side card.
+- The ranked list stays closed until the Best Sales button is clicked. Clicking it again closes the list.
+- An open list scrolls on its own. Shop, In Stock, Out of Stock, About, Cart, and dark mode stay in place.
 - Ranks books by `unitsSold`, highest first.
 - Omits books with `unitsSold` of 0.
 - If every book is 0, the card says no sales are recorded.
@@ -143,10 +150,12 @@ Filters combine with the current page. In Stock plus Fiction shows fiction that 
 
 - Cart items are `{ bookId, quantity }` stored in `localStorage`.
 - Quantity is at least 1. Removing the last unit removes the line.
-- Price and title are read from the catalog at render time, including inside the WhatsApp text.
+- The cart page lists each book with its quantity and line price. A plus adds another copy when the book is in stock. Minus lowers the quantity, and at 1 it removes the book. Remove takes that book off. Clear all empties the cart.
+- Price and title are read from the catalog at render time and again when the PDF receipt is built.
 - Out-of-stock books cannot be added. If a book later becomes out of stock while it is already in the cart, the cart line stays until the visitor removes it, and the book page no longer offers add to cart.
-- The WhatsApp link is `https://wa.me/<digits>?text=<encoded message>`.
-- The WhatsApp text is a short thank-you, then a receipt: name, address, home delivery (Yes or No), each book as title, quantity, unit price, and line price, then the total, and the note when one was entered. The address is a labeled line. It is not written as “deliver to” a place.
+- The order leaves as a PDF receipt: a short thank-you, the name, the address on its own labeled lines, home delivery as Yes or No, each book as title, quantity, unit price, and line price, the total, and the note when one was entered.
+- Where the browser can share a file, that PDF is handed to the share menu so WhatsApp can send it as a document. Otherwise the PDF is saved on the device and WhatsApp opens on the shop number with an empty message, ready for the file to be attached.
+- A general question from Visit still opens `https://wa.me/<digits>?text=<message>`.
 - The number and currency come from store config. The number is country code plus digits, with no `+` or spaces.
 
 ## Routes

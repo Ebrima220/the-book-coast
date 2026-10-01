@@ -71,33 +71,6 @@ export function buildWhatsAppUrl(message: string): string {
   return `https://wa.me/${store.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 
-export function buildOrderMessage(
-  name: string,
-  address: string,
-  homeDelivery: boolean,
-  note: string,
-  lines: { title: string; quantity: number; price: number; lineTotal: number }[],
-  total: number,
-): string {
-  const itemLines = lines.map(
-    (line) =>
-      `${line.title}\n${line.quantity} × ${formatMoney(line.price)}\n${formatMoney(line.lineTotal)}`,
-  );
-  const delivery = homeDelivery ? "Yes (extra fees may apply)" : "No";
-  const parts = [
-    `Hello, ${store.name}.`,
-    "",
-    "Thank you for your order. Please confirm the books and the final price.",
-    "",
-    "Receipt",
-    `Name: ${name.trim()}`,
-    `Address: ${address.trim()}`,
-    `Home delivery: ${delivery}`,
-    "",
-    ...itemLines,
-    "",
-    `Total: ${formatMoney(total)}`,
-  ];
-  if (note.trim()) parts.push("", `Note: ${note.trim()}`);
-  return parts.join("\n");
+export function whatsAppChatUrl(): string {
+  return `https://wa.me/${store.whatsappNumber}`;
 }
