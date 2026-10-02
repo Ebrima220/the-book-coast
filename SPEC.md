@@ -82,7 +82,7 @@ A single book is not a nav item.
 - A short thank-you while the visitor fills in the order. It mentions that home delivery may cost extra fees.
 - Name (required), address (required), a required home-delivery choice, and an optional note. The address box sits directly under the name. The address and note boxes cannot be resized. Clicking a box to type does not add an extra outline.
 - Home delivery is a choice of home delivery or without home delivery. Home delivery means extra fees may apply. The order cannot be sent until a choice is made.
-- **Send order on WhatsApp** builds a PDF receipt and sends that file. It stays off until the cart has books and the name, address, and home-delivery choice are filled in. The receipt is not written into the chat as text.
+- **Send order on WhatsApp** opens the shop number with the order already written in the message box. It stays off until the cart has books and the name, address, and home-delivery choice are filled in.
 
 ### About
 
@@ -151,10 +151,10 @@ Filters combine with the current page. In Stock plus Fiction shows fiction that 
 - Cart items are `{ bookId, quantity }` stored in `localStorage`.
 - Quantity is at least 1. Removing the last unit removes the line.
 - The cart page lists each book with its quantity and line price. A plus adds another copy when the book is in stock. Minus lowers the quantity, and at 1 it removes the book. Remove takes that book off. Clear all empties the cart.
-- Price and title are read from the catalog at render time and again when the PDF receipt is built.
+- Price and title are read from the catalog at render time and again when the WhatsApp message is built.
 - Out-of-stock books cannot be added. If a book later becomes out of stock while it is already in the cart, the cart line stays until the visitor removes it, and the book page no longer offers add to cart.
-- The order leaves as a PDF receipt: a short thank-you, the name, the address on its own labeled lines, home delivery as Yes or No, each book as title, quantity, unit price, and line price, the total, and the note when one was entered.
-- Where the browser can share a file, that PDF is handed to the share menu so WhatsApp can send it as a document. Otherwise the PDF is saved on the device and WhatsApp opens on the shop number with an empty message, ready for the file to be attached.
+- The order opens in the WhatsApp message box: a short thank-you, the name, the address on its own labeled lines, home delivery as Yes or No, each book as title, quantity, unit price, and line price, the total, and the note when one was entered.
+- The click opens `https://wa.me/<digits>?text=<message>` on the number from store config, so the shop chat opens with that text ready to send.
 - A general question from Visit still opens `https://wa.me/<digits>?text=<message>`.
 - The number and currency come from store config. The number is country code plus digits, with no `+` or spaces.
 

@@ -67,10 +67,51 @@ export function bestSellers(): Book[] {
     .sort((a, b) => b.unitsSold - a.unitsSold);
 }
 
+export type OrderMessageLine = {
+  title: string;
+  quantity: number;
+  price: number;
+  lineTotal: number;
+};
+
+export function buildOrderMessage(input: {
+  name: string;
+  address: string;
+  homeDelivery: boolean;
+  note: string;
+  lines: OrderMessageLine[];
+  total: number;
+}): string {
+  const delivery = input.homeDelivery ? "Yes (extra fees may apply)" : "No";
+  const books = input.lines
+    .map(
+      (line) =>
+        `${line.title}\n${line.quantity} × ${formatMoney(line.price)}\n${formatMoney(line.lineTotal)}`,
+    )
+    .join("\n\n");
+  const parts = [
+    `${store.name} order`,
+    "Thank you for your order. Please confirm the books and the final price.",
+    `Name: ${input.name.trim()}`,
+    `Address:\n${input.address.trim()}`,
+    `Home delivery: ${delivery}`,
+    `Books\n${books}`,
+    `Total: ${formatMoney(input.total)}`,
+  ];
+  if (input.note.trim()) parts.push(`Note:\n${input.note.trim()}`);
+  return parts.join("\n\n");
+}
+
 export function buildWhatsAppUrl(message: string): string {
   return `https://wa.me/${store.whatsappNumber}?text=${encodeURIComponent(message)}`;
 }
 
-export function whatsAppChatUrl(): string {
-  return `https://wa.me/${store.whatsappNumber}`;
+export function openWhatsApp(message: string) {
+  const link = document.createElement("a");
+  link.href = buildWhatsAppUrl(message);
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 }

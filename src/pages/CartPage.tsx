@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { BookCover } from "../components/BookCover";
 import { useCart } from "../context/CartContext";
 import { store } from "../data/store";
-import { formatMoney, getBook, whatsAppChatUrl } from "../lib/catalog";
-import { orderPdfFile } from "../lib/orderPdf";
+import { buildOrderMessage, formatMoney, getBook, openWhatsApp } from "../lib/catalog";
 
 export function CartPage() {
   const { items, setQuantity, remove, clear } = useCart();
@@ -12,7 +11,6 @@ export function CartPage() {
   const [address, setAddress] = useState("");
   const [homeDelivery, setHomeDelivery] = useState<boolean | null>(null);
   const [note, setNote] = useState("");
-  const [sending, setSending] = useState(false);
   const [sendNote, setSendNote] = useState("");
 
   useEffect(() => {
@@ -42,11 +40,9 @@ export function CartPage() {
     homeDelivery !== null &&
     lines.length > 0;
 
-  async function sendOrder() {
-    if (!canSend || homeDelivery === null || sending) return;
-    setSending(true);
-    setSendNote("");
-    const file = orderPdfFile({
+  function sendOrder() {
+    if (!canSend || homeDelivery === null) return;
+    const order = {
       name,
       address,
       homeDelivery,
@@ -58,29 +54,9 @@ export function CartPage() {
         lineTotal: line.lineTotal,
       })),
       total,
-    });
-    const share = { files: [file], title: `${store.name} order` };
-    try {
-      if (navigator.canShare?.(share)) {
-        await navigator.share(share);
-        setSendNote("Choose WhatsApp in the share menu. The receipt goes as a PDF file.");
-        return;
-      }
-    } catch (error) {
-      if (error instanceof DOMException && error.name === "AbortError") return;
-    } finally {
-      setSending(false);
-    }
-    const url = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = file.name;
-    link.click();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    window.open(whatsAppChatUrl(), "_blank", "noopener,noreferrer");
-    setSendNote(
-      "The PDF is saved on this device. Attach it in the WhatsApp chat that opened. The books and prices stay in the file.",
-    );
+    };
+    openWhatsApp(buildOrderMessage(order));
+    setSendNote("WhatsApp opened on the shop number with your order in the message. Read it, then send.");
   }
 
   return (
@@ -229,13 +205,12 @@ export function CartPage() {
                 <button
                   type="button"
                   onClick={sendOrder}
-                  disabled={sending}
                   className="mt-4 rounded-md bg-clay px-4 py-2 font-semibold text-white"
                 >
                   Send order on WhatsApp
                 </button>
                 <p className="mt-2 text-sm">
-                  The order is a PDF receipt. The books, prices, and address are in that file, so they cannot be edited in the chat.
+                  This opens WhatsApp on the shop number with your order already in the message. Read it, then send.
                 </p>
                 {sendNote ? <p className="mt-2 text-sm">{sendNote}</p> : null}
               </>

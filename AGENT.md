@@ -16,7 +16,7 @@ Product requirements live in [SPEC.md](SPEC.md). Follow that file when behavior 
 - Open **In Stock** for books that can be ordered, and **Out of Stock** for books that cannot.
 - Open a book page with a back arrow, cover, price, and description. In-stock books can be added to the cart. Out-of-stock books stay visible and cannot be added.
 - Review the cart, change quantities, and remove items.
-- Read a short thank-you, enter a name and an address, choose home delivery or not, add an optional note, then send the order on WhatsApp as a PDF receipt. Home delivery may cost extra fees.
+- Read a short thank-you, enter a name and an address, choose home delivery or not, add an optional note, then send the order on WhatsApp. The shop chat opens with the order already in the message. Home delivery may cost extra fees.
 
 Books live in a data file in the project, so adding a title means editing that file. A staff admin screen can come later.
 
@@ -31,7 +31,7 @@ flowchart LR
   wa --> talk[Confirm details in chat]
 ```
 
-The order is a PDF receipt: a short thank-you, then the name, the address on its own line, home delivery as Yes or No, each book with its title, quantity, and price, the total, and the note. The PDF is shared to WhatsApp as a file, so the receipt is not an editable chat message. Where the browser cannot share a file, the PDF is saved and WhatsApp opens on the shop number with an empty message so the file can be attached. The phone number and currency live in one config file so they are easy to change.
+The order opens in the WhatsApp message box on the shop number: a short thank-you, then the name, the address on its own line, home delivery as Yes or No, each book with its title, quantity, and price, the total, and the note. The phone number and currency live in one config file so they are easy to change.
 
 Payment is a later step on the same path: after the cart, a future checkout can either open WhatsApp (as now) or take payment. This version only builds the WhatsApp branch. Prices are shown so the customer sees a total, and the chat is where the final amount is agreed.
 
@@ -121,7 +121,7 @@ Data files:
 - Cart state in the browser (`localStorage`) so a refresh does not empty the cart.
 - Covers in `public/covers/`. Until real photos exist, use simple placeholders.
 
-A cart item stores book id and quantity. Price is always read from the catalog when rendering and when building the PDF receipt, so a price change in the data file shows up immediately.
+A cart item stores book id and quantity. Price is always read from the catalog when rendering and when building the WhatsApp message, so a price change in the data file shows up immediately.
 
 ## Build order
 
