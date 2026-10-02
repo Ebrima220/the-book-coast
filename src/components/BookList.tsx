@@ -18,11 +18,9 @@ const panels = [
 export function BookList({
   books,
   empty,
-  still = false,
 }: {
   books: Book[];
   empty: string;
-  still?: boolean;
 }) {
   const [saved, setSaved] = useState<string[]>([]);
 
@@ -44,24 +42,7 @@ export function BookList({
     return <p className="mt-6">{empty}</p>;
   }
 
-  if (still) {
-    return (
-      <ul className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {books.map((book, index) => (
-          <BookCard
-            key={book.id}
-            book={book}
-            panel={panels[index % panels.length]}
-            saved={saved.includes(book.id)}
-            onSave={() => toggleSaved(book.id)}
-            still
-          />
-        ))}
-      </ul>
-    );
-  }
-
-  const rows = splitRows(books, 5);
+  const rows = splitRows(books);
 
   return (
     <div className="mt-6 space-y-8">
@@ -90,7 +71,7 @@ function BookRow({
   onSave: (bookId: string) => void;
 }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const copies = 3;
+  const copies = loopCopies(books.length);
   const loop = Array.from({ length: copies }, () => books).flat();
   const rowKey = books.map((book) => book.id).join("|");
 
@@ -124,7 +105,7 @@ function BookRow({
   return (
     <div
       ref={scrollerRef}
-      className="@container overflow-x-auto overflow-y-hidden"
+      className="@container touch-pan-x overflow-x-auto overflow-y-hidden"
       aria-label={`Book row ${rowIndex + 1}`}
     >
       <ul className="flex w-max gap-4">
@@ -147,25 +128,17 @@ function BookCard({
   panel,
   saved,
   onSave,
-  still = false,
 }: {
   book: Book;
   panel: string;
   saved: boolean;
   onSave: () => void;
-  still?: boolean;
 }) {
   const { add } = useCart();
   const [added, setAdded] = useState(false);
 
   return (
-    <li
-      className={
-        still
-          ? "group flex w-full min-w-0 flex-col overflow-hidden"
-          : "group flex w-[calc((100cqw-2rem)/2.2)] min-w-0 shrink-0 flex-col overflow-hidden md:w-60"
-      }
-    >
+    <li className="group flex w-[calc((100cqw-2rem)/2.2)] min-w-0 shrink-0 flex-col overflow-hidden md:w-60">
       <Link to={`/books/${book.id}`} className="block w-full min-w-0 text-inherit no-underline">
         <span className={`flex w-full justify-center rounded-2xl px-6 py-8 ${panel}`}>
           <BookCover book={book} className="h-44 w-28 shadow-[0_16px_24px_rgba(28,25,21,0.22)]" />
@@ -230,13 +203,19 @@ function HeartIcon({ filled }: { filled: boolean }) {
   );
 }
 
-function splitRows(books: Book[], rowCount: number): Book[][] {
-  const count = Math.min(rowCount, books.length);
+function splitRows(books: Book[]): Book[][] {
+  const count = Math.min(5, Math.max(1, Math.floor(books.length / 3)));
   const rows = Array.from({ length: count }, () => [] as Book[]);
   books.forEach((book, index) => {
     rows[index % count].push(book);
   });
   return rows;
+}
+
+function loopCopies(count: number): number {
+  if (count >= 3) return 3;
+  if (count === 2) return 6;
+  return 12;
 }
 
 function readSaved(): string[] {

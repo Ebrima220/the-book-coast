@@ -23,7 +23,7 @@ The sample dashboard is a structure reference only.
 | Cart | On a medium or large screen it is an icon at the bottom of the side nav. The browsing area uses the full width of the scrolling center. |
 | Footer | Visit: physical address coming soon, email, and social links. Shown at the bottom of every page, on every screen size. |
 
-Do not include a profile, a Live badge, notifications, an achievement card, or ratings. Books sit in 5 rows. Each row slides on its own, so moving one row leaves the others still. A row loops without end: after the last book, the same row continues with its books again. A phone shows two books in each row, with the next book peeking in. Self-Development and Financial Literacy are the exception: those lists do not slide, and a phone shows two books across. On a medium or large screen the rows stay five high, with wider cards. Each cover sits on a colored panel. Under it: the title, a short description, and a heart that saves the book in the browser. Price and stock stay on the card. Hovering a card reveals Add to cart. Touch screens keep that button visible. Out-of-stock cards show a disabled button instead.
+Do not include a profile, a Live badge, notifications, an achievement card, or ratings. Books sit in 5 rows. Each row slides on its own, so moving one row leaves the others still. A row loops without end: after the last book, the same row continues with its books again. A phone shows two books in each row, with the next book peeking in. On a medium or large screen the rows stay five high, with wider cards. Each cover sits on a colored panel. Under it: the title, a short description, and a heart that saves the book in the browser. Price and stock stay on the card. Hovering a card reveals Add to cart. Touch screens keep that button visible. Out-of-stock cards show a disabled button instead.
 
 ## Side nav
 
@@ -131,7 +131,7 @@ Shown on Shop, In Stock, and Out of Stock.
   - **Self-Development** — `topic` is `self-development`
   - **Financial Literacy** — `topic` is `financial-literacy`
 
-When Self-Development or Financial Literacy is selected, those books do not slide. A small screen shows two books across. The list grows downward. All, Fiction, and All non-fiction keep the sliding rows.
+Self-Development and Financial Literacy slide the same way as All. A short list stays in fewer rows so the row is still wide enough to slide on a phone and on a larger screen.
 
 Self-Development and Financial Literacy are subsets of Non-fiction. A book cannot be both fiction and one of those topics.
 
