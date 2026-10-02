@@ -18,9 +18,11 @@ const panels = [
 export function BookList({
   books,
   empty,
+  still = false,
 }: {
   books: Book[];
   empty: string;
+  still?: boolean;
 }) {
   const [saved, setSaved] = useState<string[]>([]);
 
@@ -40,6 +42,23 @@ export function BookList({
 
   if (books.length === 0) {
     return <p className="mt-6">{empty}</p>;
+  }
+
+  if (still) {
+    return (
+      <ul className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {books.map((book, index) => (
+          <BookCard
+            key={book.id}
+            book={book}
+            panel={panels[index % panels.length]}
+            saved={saved.includes(book.id)}
+            onSave={() => toggleSaved(book.id)}
+            still
+          />
+        ))}
+      </ul>
+    );
   }
 
   const rows = splitRows(books, 5);
@@ -128,17 +147,25 @@ function BookCard({
   panel,
   saved,
   onSave,
+  still = false,
 }: {
   book: Book;
   panel: string;
   saved: boolean;
   onSave: () => void;
+  still?: boolean;
 }) {
   const { add } = useCart();
   const [added, setAdded] = useState(false);
 
   return (
-    <li className="group flex w-[calc((100cqw-2rem)/2.2)] min-w-0 shrink-0 flex-col overflow-hidden md:w-60">
+    <li
+      className={
+        still
+          ? "group flex w-full min-w-0 flex-col overflow-hidden"
+          : "group flex w-[calc((100cqw-2rem)/2.2)] min-w-0 shrink-0 flex-col overflow-hidden md:w-60"
+      }
+    >
       <Link to={`/books/${book.id}`} className="block w-full min-w-0 text-inherit no-underline">
         <span className={`flex w-full justify-center rounded-2xl px-6 py-8 ${panel}`}>
           <BookCover book={book} className="h-44 w-28 shadow-[0_16px_24px_rgba(28,25,21,0.22)]" />

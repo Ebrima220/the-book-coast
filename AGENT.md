@@ -96,7 +96,7 @@ The dark-mode control is a crescent moon in light mode and a sun in dark mode. I
   - **Self-Development**
   - **Financial Literacy**
 
-Choosing Non-fiction shows every non-fiction title, and reveals the two narrower filters beneath it. Self-Development and Financial Literacy are subsets of Non-fiction, so a financial-literacy book is still non-fiction. Fiction has no sub-filters. An **All** option clears the filter and shows every book in that list.
+Choosing Non-fiction shows every non-fiction title, with **All** selected, and reveals Self-Development and Financial Literacy beneath it. Those two lists do not slide. A small screen shows two books across. Fiction has no sub-filters. An **All** option on the main row clears the filter and shows every book in that list.
 
 ## Suggested build
 

@@ -7,7 +7,7 @@ const mainFilters = [
 ] as const;
 
 const topics = [
-  { id: "", label: "All non-fiction" },
+  { id: "", label: "All" },
   { id: "self-development", label: "Self-Development" },
   { id: "financial-literacy", label: "Financial Literacy" },
 ] as const;
